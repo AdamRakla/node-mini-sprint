@@ -12,11 +12,11 @@ const port = 3000;
 
 // TODO: Fill with strings of your favorite quotes :)
 const quotes = [
-  'one',
-  'two',
-  'three',
-  'four',
-  'five'
+  'To not give your best, is to sacrifice the gift. - Steve Prefontaine',
+  'Pain is temporary, losing is forever',
+  'Is mayonaise an instrument? - Patrick Star',
+  'ANYTHING IS POSSIBLE!!!! - Kevin Garnett',
+  'Are you a different animal, and the same beast? - Kobe'
 ];
 
 //Utility Function to return a random integer
@@ -37,13 +37,22 @@ const handleRequest = function(req, res) {
   }
 
   // TODO: GET ONE
-  if ((req.url == '/quote/' || req.url == '/quote') && req.method == "FILL ME IN") {
-    //YOUR CODE HERE
-
+  if ((req.url == '/quote/' || req.url == '/quote') && req.method == "GET") {
+    var quoteIndex = getRandomInt(0,quotes.length);
+    res.writeHead(200, headers);
+    var quoteResponse = quotes[quoteIndex];
+    res.end(quoteResponse);
   }
   // TODO: POST/CREATE
-  else if ((req.url == 'FILL ME IN' || req.url == 'FILL ME IN') && req.method == "FILL ME IN") {
-    //YOUR CODE HERE
+  else if ((req.url == '/quote' || req.url == '/quote') && req.method == "POST") {
+    quotes.push(req.data);
+    res.writeHead(201, headers);
+    res.end();
+  }
+
+  else if ((req.url == '/quote') && req.method == 'OPTIONS') {
+    res.writeHead(200, headers);
+    res.end();
   }
 
 //CATCH ALL ROUTE

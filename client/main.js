@@ -11,14 +11,39 @@ $(document).ready(function() {
   });
 
   function getQuote(){
-
-    //YOUR CODE HERE, Add a GET request
+    $.ajax({
+      url: 'http://localhost:3000/quote',
+      type: 'GET',
+      data: 0,
+      contentType: 'text/plain',
+      success: (data) => {
+        var newNode = document.createElement('p');
+        var text = document.createTextNode(data);
+        newNode.appendChild(text);
+        document.getElementById('response').appendChild(newNode);
+      },
+      error: function(error) {
+        console.log('Error: Was not able to get quote from server');
+      }
+    })
 
   }
 
   function addQuote(quote){
-    
-    //YOUR CODE HERE, Add a POST request
-
+    $.ajax({
+      url: 'http://localhost:3000/quote',
+      type: 'POST',
+      data: quote,
+      contentType: 'text/plain',
+      success: () => {
+        var newNode = document.createElement('p');
+        var text = document.createTextNode(quote);
+        newNode.appendChild(text);
+        document.getElementById('response').appendChild(newNode);
+      },
+      error: function(error) {
+        console.log('Error: Was not able to post quote to server');
+      }
+    })
   }
 });
