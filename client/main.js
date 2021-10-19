@@ -6,7 +6,7 @@ $(document).ready(function() {
 // when the user enters data and clicks submit, post the quote to the server
   $('#submit').click((e) => {
     e.preventDefault();
-    let quote = $('input').val();
+    let quote = {quote: $('input').val()};
     addQuote(quote);
   });
 
@@ -15,10 +15,10 @@ $(document).ready(function() {
       url: 'http://localhost:3000/quote',
       type: 'GET',
       data: 0,
-      contentType: 'text/plain',
+      contentType: 'application/json',
       success: (data) => {
         var newNode = document.createElement('p');
-        var text = document.createTextNode(data);
+        var text = document.createTextNode(data.quote);
         newNode.appendChild(text);
         document.getElementById('response').appendChild(newNode);
       },
@@ -34,10 +34,10 @@ $(document).ready(function() {
       url: 'http://localhost:3000/quote',
       type: 'POST',
       data: quote,
-      contentType: 'text/plain',
+      contentType: 'application/json',
       success: () => {
         var newNode = document.createElement('p');
-        var text = document.createTextNode(quote);
+        var text = document.createTextNode(quote.quote);
         newNode.appendChild(text);
         document.getElementById('response').appendChild(newNode);
       },

@@ -1,12 +1,17 @@
 const http = require('http');
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
 //headers to allows CORS requests
-const headers = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10
-};
+// const headers = {
+//   "access-control-allow-origin": "*",
+//   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+//   "access-control-allow-headers": "content-type, accept",
+//   "access-control-max-age": 10
+// };
+app.use(cors());
+app.use(express.json());
 
 const port = 3000;
 
@@ -26,45 +31,55 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-const handleRequest = function(req, res) {
-  console.log(`Endpoint: ${req.url} Method: ${req.method}`);
+app.get('/quote', (req, res) => {
+  var quoteIndex = getRandomInt(0,quotes.length);
+  res.status(200).send({quote: quotes[quoteIndex]});
+})
 
-  // redirect users to /quote if they try to hit the homepage. This should already work, no changes needed
-  if (req.url == '/') {
-    console.log('redirecting');
-    res.writeHead(301, {...headers, Location: `http://localhost:${port}/quote`}) //redirect to quote
-    res.end();
-  }
+app.post('/quote', (req, res) => {
+  quotes.push(req.body.quote);
+  res.status(200).send('success!');
+})
 
-  // TODO: GET ONE
-  if ((req.url == '/quote/' || req.url == '/quote') && req.method == "GET") {
-    var quoteIndex = getRandomInt(0,quotes.length);
-    res.writeHead(200, headers);
-    var quoteResponse = quotes[quoteIndex];
-    res.end(quoteResponse);
-  }
-  // TODO: POST/CREATE
-  else if ((req.url == '/quote' || req.url == '/quote') && req.method == "POST") {
-    quotes.push(req.data);
-    res.writeHead(201, headers);
-    res.end();
-  }
+// const handleRequest = function(req, res) {
+//   console.log(`Endpoint: ${req.url} Method: ${req.method}`);
 
-  else if ((req.url == '/quote') && req.method == 'OPTIONS') {
-    res.writeHead(200, headers);
-    res.end();
-  }
+//   // redirect users to /quote if they try to hit the homepage. This should already work, no changes needed
+//   if (req.url == '/') {
+//     console.log('redirecting');
+//     res.writeHead(301, {...headers, Location: `http://localhost:${port}/quote`}) //redirect to quote
+//     res.end();
+//   }
 
-//CATCH ALL ROUTE
-  else {
-    res.writeHead(404,headers);
-    res.end('Page not found');
+//   // TODO: GET ONE
+//   if ((req.url == '/quote/' || req.url == '/quote') && req.method == "GET") {
+//     var quoteIndex = getRandomInt(0,quotes.length);
+//     res.writeHead(200, headers);
+//     var quoteResponse = quotes[quoteIndex];
+//     res.end(quoteResponse);
+//   }
+//   // TODO: POST/CREATE
+//   else if ((req.url == '/quote' || req.url == '/quote') && req.method == "POST") {
+//     quotes.push(req.data);
+//     res.writeHead(201, headers);
+//     res.end();
+//   }
 
-  }
-}
+//   else if ((req.url == '/quote') && req.method == 'OPTIONS') {
+//     res.writeHead(200, headers);
+//     res.end();
+//   }
 
-const server = http.createServer(handleRequest);
-server.listen(port);
+// //CATCH ALL ROUTE
+//   else {
+//     res.writeHead(404,headers);
+//     res.end('Page not found');
+//   }
+// }
 
-console.log('Server is running in the terminal!');
-console.log(`Listening on http://localhost:${port}`);
+//const server = http.createServer(handleRequest);
+app.listen(port, () => {
+  console.log('Server is running in the terminal!');
+  console.log(`Listening on http://localhost:${port}`);
+});
+
