@@ -2,6 +2,7 @@ const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const model = require('./db/index.js');
 
 //headers to allows CORS requests
 // const headers = {
@@ -16,13 +17,13 @@ app.use(express.json());
 const port = 3000;
 
 // TODO: Fill with strings of your favorite quotes :)
-const quotes = [
-  'To not give your best, is to sacrifice the gift. - Steve Prefontaine',
-  'Pain is temporary, losing is forever',
-  'Is mayonaise an instrument? - Patrick Star',
-  'ANYTHING IS POSSIBLE!!!! - Kevin Garnett',
-  'Are you a different animal, and the same beast? - Kobe'
-];
+// const quotes = [
+//   'To not give your best, is to sacrifice the gift. - Steve Prefontaine',
+//   'Pain is temporary, losing is forever',
+//   'Is mayonaise an instrument? - Patrick Star',
+//   'ANYTHING IS POSSIBLE!!!! - Kevin Garnett',
+//   'Are you a different animal, and the same beast? - Kobe'
+// ];
 
 //Utility Function to return a random integer
 function getRandomInt(min, max) {
@@ -31,15 +32,44 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-app.get('/quote', (req, res) => {
-  var quoteIndex = getRandomInt(0,quotes.length);
-  res.status(200).send({quote: quotes[quoteIndex]});
+app.get('/quote', (req,res) => {
+  model.getNumQuotes((err, num) => {
+    if (err) {
+      return err;
+    } else {
+      var numOfQuotes = num[0]['COUNT(*)'];
+      var index = getRandomInt(1,numOfQuotes);
+      model.getQuote(index, (err, result) => {
+        if (err) {
+          return err;
+        } else {
+          var quote = result[0].quote;
+          res.status(200).send({quote});
+        }
+      })
+    }
+  })
 })
 
 app.post('/quote', (req, res) => {
-  quotes.push(req.body.quote);
-  res.status(200).send('success!');
+  model.postQuote(req.body.quote, (err, response) => {
+    if (err) {
+      return err;
+    } else {
+      res.status(200).send('success');
+    }
+  })
 })
+
+// app.get('/quote', (req, res) => {
+//   var quoteIndex = getRandomInt(0,quotes.length);
+//   res.status(200).send({quote: quotes[quoteIndex]});
+// })
+
+// app.post('/quote', (req, res) => {
+//   quotes.push(req.body.quote);
+//   res.status(200).send('success!');
+// })
 
 // const handleRequest = function(req, res) {
 //   console.log(`Endpoint: ${req.url} Method: ${req.method}`);

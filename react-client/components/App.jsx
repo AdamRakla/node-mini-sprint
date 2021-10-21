@@ -19,7 +19,6 @@ export default class App extends React.Component {
     axios.get('http://localhost:3000/quote')
       .then((quote) => {
         var response = quote.data.quote;
-        console.log(response);
         this.setState({
           quotes: [...this.state.quotes, response]});
       })
